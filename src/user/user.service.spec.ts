@@ -9,6 +9,7 @@ type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOne: jest.fn(),
+  find: jest.fn(),
 });
 
 describe('UserService', () => {
@@ -53,6 +54,24 @@ describe('UserService', () => {
           expect(err).toBeInstanceOf(NotFoundException);
           expect(err.message).toEqual(`User ID: ${userId} not found.`);
         }
+      });
+    });
+  });
+
+  describe('findAll', () => {
+    describe('find all users', () => {
+      it('should return the list of users', async () => {
+        const expectedUser = [
+          { name: 'test', email: 'test@test.com', password: 123456 },
+        ];
+
+        userRepository.find.mockReturnValue(expectedUser);
+
+        const user = await service.findAll();
+
+        expect(user).toEqual([
+          { name: 'test', email: 'test@test.com', password: 123456 },
+        ]);
       });
     });
   });
